@@ -20,6 +20,9 @@ public class ReadExample
 			System.out.println("Num frames: " + wavFile.getNumFrames());
 			// Create a buffer of 100 frames
 			double[] buffer = new double[(int) wavFile.getNumFrames() * numChannels];
+//			int[][] buffer2 = new int[(int) wavFile.getNumFrames()][numChannels];
+			int[][] buffer2 = new int[numChannels][(int) wavFile.getNumFrames()];
+
 
 			int framesRead;
 			double min = Double.MAX_VALUE;
@@ -28,7 +31,8 @@ public class ReadExample
 			do
 			{
 				// Read frames into buffer
-				framesRead = wavFile.readFrames(buffer, buffer.length);
+//				framesRead = wavFile.readFrames(buffer, buffer.length);
+				framesRead = wavFile.readFrames(buffer2, 0, buffer.length);
 
 				// Loop through frames and look for minimum and maximum value
 				for (int s=0 ; s<framesRead * numChannels ; s++)
@@ -38,6 +42,35 @@ public class ReadExample
 				}
 			}
 			while (framesRead != 0);
+//
+//			int LIMIT = 1000;
+//			int k = 0;
+//			for (double val : buffer) {
+//				System.out.println(val + " , ");
+//				k++;
+//				if (k > LIMIT) {
+//					break;
+//				}
+//			}
+//			System.out.println("int 2d buffer size: " + buffer2.length + ", " + buffer2[0].length);
+//			int LIMIT = 1000;
+//			int k = 0;
+//			for (int i = 0; i < buffer2.length; i++) {
+//				for (int j = 0; j < buffer2[0].length; j++) {
+//					System.out.print(buffer2[i][j] + " , ");
+//					k++;
+//					if (k > LIMIT) {
+//						break;
+//					}
+//				}
+//				System.out.println("");
+//			}
+
+
+
+
+
+
 
 			MFCC mfcc = new MFCC();
 			System.out.println("Audio dimensions: " + buffer.length);
