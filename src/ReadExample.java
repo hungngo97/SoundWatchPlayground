@@ -22,6 +22,8 @@ public class ReadExample
 			double[] buffer = new double[(int) wavFile.getNumFrames() * numChannels];
 //			int[][] buffer2 = new int[(int) wavFile.getNumFrames()][numChannels];
 			int[][] buffer2 = new int[numChannels][(int) wavFile.getNumFrames()];
+			int[] buffer3 = new int[(int) wavFile.getNumFrames() * numChannels];
+
 
 
 			int framesRead;
@@ -32,8 +34,8 @@ public class ReadExample
 			{
 				// Read frames into buffer
 //				framesRead = wavFile.readFrames(buffer, buffer.length);
-				framesRead = wavFile.readFrames(buffer2, 0, buffer.length);
-
+//				framesRead = wavFile.readFrames(buffer2, 0, buffer.length);
+				framesRead = wavFile.readFrames(buffer3, buffer.length);
 				// Loop through frames and look for minimum and maximum value
 				for (int s=0 ; s<framesRead * numChannels ; s++)
 				{
@@ -45,13 +47,16 @@ public class ReadExample
 //
 //			int LIMIT = 1000;
 //			int k = 0;
-//			for (double val : buffer) {
+//			for (double val : buffer3) {
 //				System.out.println(val + " , ");
 //				k++;
 //				if (k > LIMIT) {
 //					break;
 //				}
 //			}
+
+
+			//CODE TO PRINT OUT THE BUFFER SIZE
 //			System.out.println("int 2d buffer size: " + buffer2.length + ", " + buffer2[0].length);
 //			int LIMIT = 1000;
 //			int k = 0;
@@ -69,27 +74,34 @@ public class ReadExample
 
 
 
-
+			double[] input = new double[buffer3.length];
+			for (int i = 0; i < input.length; i++) {
+				input[i] = (double) buffer3[i];
+			}
 
 
 			MFCC mfcc = new MFCC();
 			System.out.println("Audio dimensions: " + buffer.length);
-			double[][] melSpectrogram = mfcc.melSpectrogram(buffer);
+			double[][] melSpectrogram = mfcc.melSpectrogram(input);
 			System.out.println("Dimension: " + melSpectrogram.length + " , " + melSpectrogram[0].length);
 
-			for (int i = 0; i < melSpectrogram.length; i++) {
-				for (int j = 0; j < melSpectrogram[0].length; j++) {
-					melSpectrogram[i][j] = Math.log(melSpectrogram[i][j]);
-				}
-			}
-
-			System.out.println("TAKING MEL SPECTROGRAM");
+//			TAKING LOG
 //			for (int i = 0; i < melSpectrogram.length; i++) {
 //				for (int j = 0; j < melSpectrogram[0].length; j++) {
-//					System.out.print(melSpectrogram[i][j] + " , ");
+//					melSpectrogram[i][j] = Math.log(melSpectrogram[i][j]);
 //				}
-//				System.out.println("");
 //			}
+
+			System.out.println("TAKING MEL SPECTROGRAM");
+			for (int i = 0; i < melSpectrogram.length; i++) {
+				for (int j = 0; j < melSpectrogram[0].length; j++) {
+					System.out.print(melSpectrogram[i][j] + " , ");
+				}
+				System.out.println("");
+				if (i > 10) {
+					break;
+				}
+			}
 
 			// Close the wavFile
 			wavFile.close();
