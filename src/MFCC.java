@@ -47,9 +47,12 @@ public class MFCC {
 
 
     //mel spectrogram, librosa
-    private double[][] melSpectrogram(double[] y){
+    public double[][] melSpectrogram(double[] y){
+        System.out.println("STEP 1");
         double[][] melBasis = melFilter();
+        System.out.println("STEP 2");
         double[][] spectro = stftMagSpec(y);
+        System.out.println("STEP 3");
         double[][] melS = new double[melBasis.length][spectro[0].length];
         for (int i = 0; i < melBasis.length; i++){
             for (int j = 0; j < spectro[0].length; j++){
@@ -65,18 +68,22 @@ public class MFCC {
     //stft, librosa
     private double[][] stftMagSpec(double[] y){
         //Short-time Fourier transform (STFT)
+        System.out.println("STEP 2.1");
         final double[] fftwin = getWindow();
         //pad y with reflect mode so it's centered. This reflect padding implementation is
         // not perfect but works for this demo.
         double[] ypad = new double[n_fft+y.length];
+        System.out.println("STEP 2.1");
         for (int i = 0; i < n_fft/2; i++){
             ypad[(n_fft/2)-i-1] = y[i+1];
             ypad[(n_fft/2)+y.length+i] = y[y.length-2-i];
         }
+        System.out.println("STEP 2.2");
+
         for (int j = 0; j < y.length; j++){
             ypad[(n_fft/2)+j] = y[j];
         }
-
+        System.out.println("STEP 2.3");
 
         final double[][] frame = yFrame(ypad);
         double[][] fftmagSpec = new double[1+n_fft/2][frame[0].length];
