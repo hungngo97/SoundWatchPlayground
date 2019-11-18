@@ -1,13 +1,13 @@
 public class MFCC {
 
-    private final static int       n_mfcc       		= 20;
-    private final static double    fMin                 = 0.0;
-    private final static int       n_fft                = 2048;
-    private final static int       hop_length           = 512;
-    private final static int	   n_mels               = 128;
+    private final static int       n_mfcc       		= 20; // 20
+    private final static double    fMin                 = 125.0; //0.0;
+    private final static int       n_fft                = 512;//2048; //TODO: figure out which value can scale mel spectro
+    private final static int       hop_length           = 252;//512;
+    private final static int	   n_mels               = 96; //96; //128 before
 
     private final static double    sampleRate           = 16000.0;
-    private final static double    fMax                 = sampleRate/2.0;
+    private final static double    fMax                 = 7500; //sampleRate/2.0;
 
     FFT fft = new FFT();
 
@@ -52,6 +52,16 @@ public class MFCC {
         double[][] melBasis = melFilter();
         System.out.println("STEP 2");
         double[][] spectro = stftMagSpec(y);
+        System.out.println("STFT mag shape" + spectro.length + ", " + spectro[0].length);
+        for (int i = 0; i < spectro.length; i++) {
+            for (int j = 0; j < spectro[0].length; j++) {
+                System.out.print(spectro[i][j] + " , ");
+            }
+            System.out.println("");
+            if (i > 10) {
+                break;
+            }
+        }
         System.out.println("STEP 3");
         double[][] melS = new double[melBasis.length][spectro[0].length];
         for (int i = 0; i < melBasis.length; i++){

@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.Arrays;
 
 public class ReadExample
 {
@@ -6,10 +7,11 @@ public class ReadExample
 	{
 		String PATH = "/Users/macbook/Documents/workspace/SoundWatchPlayground/src/example.wav";
 		String LG_PATH = "/Users/macbook/Documents/workspace/SoundWatchPlayground/src/example_LG.wav";
+		String VIDEO2 = "/Users/macbook/Documents/workspace/SoundWatchPlayground/src/example2.wav";
 		try
 		{
 			// Open the wav file specified as the first argument
-			WavFile wavFile = WavFile.openWavFile(new File(PATH));
+			WavFile wavFile = WavFile.openWavFile(new File(VIDEO2));
 
 			// Display information about the wav file
 			wavFile.display();
@@ -33,9 +35,9 @@ public class ReadExample
 			do
 			{
 				// Read frames into buffer
-//				framesRead = wavFile.readFrames(buffer, buffer.length);
+				framesRead = wavFile.readFrames(buffer, buffer.length);
 //				framesRead = wavFile.readFrames(buffer2, 0, buffer.length);
-				framesRead = wavFile.readFrames(buffer3, buffer.length);
+//				framesRead = wavFile.readFrames(buffer3, buffer.length);
 				// Loop through frames and look for minimum and maximum value
 				for (int s=0 ; s<framesRead * numChannels ; s++)
 				{
@@ -44,16 +46,16 @@ public class ReadExample
 				}
 			}
 			while (framesRead != 0);
-//
-//			int LIMIT = 1000;
-//			int k = 0;
-//			for (double val : buffer3) {
-//				System.out.println(val + " , ");
-//				k++;
-//				if (k > LIMIT) {
-//					break;
-//				}
-//			}
+
+			int LIMIT = 1000;
+			int k = 0;
+			for (double val : buffer) {
+				System.out.print(val + " , ");
+				k++;
+				if (k > LIMIT) {
+					break;
+				}
+			}
 
 
 			//CODE TO PRINT OUT THE BUFFER SIZE
@@ -74,10 +76,11 @@ public class ReadExample
 
 
 
-			double[] input = new double[buffer3.length];
+			double[] input = new double[16000];
 			for (int i = 0; i < input.length; i++) {
-				input[i] = (double) buffer3[i];
+				input[i] = (double) buffer[i + 0];
 			}
+//			double[] input = buffer;
 
 
 			MFCC mfcc = new MFCC();
@@ -86,11 +89,18 @@ public class ReadExample
 			System.out.println("Dimension: " + melSpectrogram.length + " , " + melSpectrogram[0].length);
 
 //			TAKING LOG
-//			for (int i = 0; i < melSpectrogram.length; i++) {
-//				for (int j = 0; j < melSpectrogram[0].length; j++) {
-//					melSpectrogram[i][j] = Math.log(melSpectrogram[i][j]);
-//				}
-//			}
+			System.out.println("Log Mel Spectrogram");
+			double SCALE = 1.0;
+			double OFFSET = 0;
+			for (int i = 0; i < melSpectrogram.length; i++) {
+				for (int j = 0; j < melSpectrogram[0].length; j++) {
+					melSpectrogram[i][j] = Math.log(melSpectrogram[i][j] * SCALE + OFFSET);
+				}
+			}
+
+			float[] mfccInput = mfcc.process(input);
+			System.out.println(Arrays.toString(mfccInput));
+			System.out.println(mfccInput.length);
 
 			System.out.println("TAKING MEL SPECTROGRAM");
 			for (int i = 0; i < melSpectrogram.length; i++) {
