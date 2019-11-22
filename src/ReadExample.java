@@ -35,9 +35,9 @@ public class ReadExample
 			do
 			{
 				// Read frames into buffer
-				framesRead = wavFile.readFrames(buffer, buffer.length);
-//				framesRead = wavFile.readFrames(buffer2, 0, buffer.length);
-//				framesRead = wavFile.readFrames(buffer3, buffer.length);
+				framesRead = wavFile.readFrames(buffer, buffer.length); // <-- read wav file in as scaled double buffer
+//				framesRead = wavFile.readFrames(buffer2, 0, buffer.length); <-- read wav file in as double 2d array
+//				framesRead = wavFile.readFrames(buffer3, buffer.length); // <-- read wav file in as int array
 				// Loop through frames and look for minimum and maximum value
 				for (int s=0 ; s<framesRead * numChannels ; s++)
 				{
@@ -75,7 +75,7 @@ public class ReadExample
 
 
 
-
+//			Reading input
 			double[] input = new double[16000];
 			for (int i = 0; i < input.length; i++) {
 				input[i] = (double) buffer[i + 0];
@@ -88,22 +88,33 @@ public class ReadExample
 			double[][] melSpectrogram = mfcc.melSpectrogram(input);
 			System.out.println("Dimension: " + melSpectrogram.length + " , " + melSpectrogram[0].length);
 
-////			TAKING LOG
-//			1st Approach: Scale it manually by making the mean of this mel spectrogram vector to be equal to python version
-			System.out.println("Log Mel Spectrogram");
-			double SCALE = 1.0/7.7;
-			double OFFSET = 0;
+//			Original output of Log melSpectrogram
 			for (int i = 0; i < melSpectrogram.length; i++) {
 				for (int j = 0; j < melSpectrogram[0].length; j++) {
-					melSpectrogram[i][j] = Math.log(melSpectrogram[i][j] * 1 + OFFSET) * SCALE;
+					melSpectrogram[i][j] = Math.log(melSpectrogram[i][j] * 1);
 				}
 			}
 
+////			TAKING LOG
+//			1st Approach: Scale it manually by making the mean of this mel spectrogram vector to be equal to python version
+//			System.out.println("Log Mel Spectrogram");
+//			double SCALE = 1.0/7.7;
+//			double OFFSET = 0;
+//			for (int i = 0; i < melSpectrogram.length; i++) {
+//				for (int j = 0; j < melSpectrogram[0].length; j++) {
+//					melSpectrogram[i][j] = Math.log(melSpectrogram[i][j] * 1 + OFFSET) * SCALE;
+//				}
+//			}
+
+//			2nd Approach: Use the built in function of MFCC to process (results is not the same at all)
 //			float[] mfccInput = mfcc.process(input);
 //			System.out.println("MFCC O")
 //			System.out.println(Arrays.toString(mfccInput));
 //			System.out.println(mfccInput.length);
 
+
+
+//			OUTPUT: (With mean, max, min to compare with Python version)
 			double sum = 0;
 			double count = 0;
 			min = Double.MAX_VALUE;
