@@ -88,31 +88,46 @@ public class ReadExample
 			double[][] melSpectrogram = mfcc.melSpectrogram(input);
 			System.out.println("Dimension: " + melSpectrogram.length + " , " + melSpectrogram[0].length);
 
-//			TAKING LOG
+////			TAKING LOG
+//			1st Approach: Scale it manually by making the mean of this mel spectrogram vector to be equal to python version
 			System.out.println("Log Mel Spectrogram");
-			double SCALE = 1.0;
+			double SCALE = 1.0/7.7;
 			double OFFSET = 0;
 			for (int i = 0; i < melSpectrogram.length; i++) {
 				for (int j = 0; j < melSpectrogram[0].length; j++) {
-					melSpectrogram[i][j] = Math.log(melSpectrogram[i][j] * SCALE + OFFSET);
+					melSpectrogram[i][j] = Math.log(melSpectrogram[i][j] * 1 + OFFSET) * SCALE;
 				}
 			}
 
-			float[] mfccInput = mfcc.process(input);
-			System.out.println(Arrays.toString(mfccInput));
-			System.out.println(mfccInput.length);
+//			float[] mfccInput = mfcc.process(input);
+//			System.out.println("MFCC O")
+//			System.out.println(Arrays.toString(mfccInput));
+//			System.out.println(mfccInput.length);
 
+			double sum = 0;
+			double count = 0;
+			min = Double.MAX_VALUE;
+			max = Double.MIN_VALUE;
 			System.out.println("TAKING MEL SPECTROGRAM");
 			for (int i = 0; i < melSpectrogram.length; i++) {
 				for (int j = 0; j < melSpectrogram[0].length; j++) {
-					System.out.print(melSpectrogram[i][j] + " , ");
+					sum += melSpectrogram[i][j];
+					count++;
+					min = Math.min(min, melSpectrogram[i][j]);
+					max = Math.max(max, melSpectrogram[i][j]);
+				}
+
+
+				for (int j = 0; j < melSpectrogram[0].length; j++) {
+					System.out.print(melSpectrogram[i][j] * 1 + " , ");
 				}
 				System.out.println("");
-				if (i > 10) {
+				if (i > 30) {
 					break;
 				}
 			}
 
+			System.out.println("Average: " + sum / count);
 			// Close the wavFile
 			wavFile.close();
 

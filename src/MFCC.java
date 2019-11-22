@@ -58,7 +58,7 @@ public class MFCC {
                 System.out.print(spectro[i][j] + " , ");
             }
             System.out.println("");
-            if (i > 10) {
+            if (i > 100) {
                 break;
             }
         }
