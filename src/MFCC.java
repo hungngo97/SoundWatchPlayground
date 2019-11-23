@@ -2,8 +2,8 @@ public class MFCC {
 
     private final static int       n_mfcc       		= 20; // 20
     private final static double    fMin                 = 125.0; //0.0;
-    private final static int       n_fft                = 512;//2048; //TODO: figure out which value can scale mel spectro
-    private final static int       hop_length           = 252;//512;
+    private final static int       n_fft                = 400; //400; //512;//2048; //TODO: figure out which value can scale mel spectro
+    private final static int       hop_length           = 160; //160; //252;//512;
     private final static int	   n_mels               = 96; //96; //128 before
 
     private final static double    sampleRate           = 16000.0;
@@ -53,15 +53,15 @@ public class MFCC {
         System.out.println("STEP 2");
         double[][] spectro = stftMagSpec(y);
         System.out.println("STFT mag shape" + spectro.length + ", " + spectro[0].length);
-        for (int i = 0; i < spectro.length; i++) {
-            for (int j = 0; j < spectro[0].length; j++) {
-                System.out.print(spectro[i][j] + " , ");
-            }
-            System.out.println("");
-            if (i > 100) {
-                break;
-            }
-        }
+//        for (int i = 0; i < spectro.length; i++) {
+//            for (int j = 0; j < spectro[0].length; j++) {
+//                System.out.print(spectro[i][j] + " , ");
+//            }
+//            System.out.println("");
+//            if (i > 100) {
+//                break;
+//            }
+//        }
         System.out.println("STEP 3");
         double[][] melS = new double[melBasis.length][spectro[0].length];
         for (int i = 0; i < melBasis.length; i++){
@@ -80,9 +80,11 @@ public class MFCC {
         //Short-time Fourier transform (STFT)
         System.out.println("STEP 2.1");
         final double[] fftwin = getWindow();
+        System.out.println("FFT window size: " + fftwin.length);
         //pad y with reflect mode so it's centered. This reflect padding implementation is
         // not perfect but works for this demo.
         double[] ypad = new double[n_fft+y.length];
+        System.out.println("Ypad shape: " + ypad.length);
         System.out.println("STEP 2.1");
         for (int i = 0; i < n_fft/2; i++){
             ypad[(n_fft/2)-i-1] = y[i+1];
@@ -95,24 +97,53 @@ public class MFCC {
         }
         System.out.println("STEP 2.3");
 
-        final double[][] frame = yFrame(ypad);
-        double[][] fftmagSpec = new double[1+n_fft/2][frame[0].length];
+        //TODO: let's try not padding
+        final double[][] frame = yFrame(y);
+//        final double[][] frame = yFrame(ypad);
+        System.out.println("Windowed frame shape: " + frame.length + ", " +
+                frame[0].length);
+
+        double[][] fftmagSpec = new double[frame.length][frame[0].length];
+//        double[][] fftmagSpec = new double[1+n_fft/2][frame[0].length];
+        System.out.println("FFTMagSpec: " +  fftmagSpec.length + ", " + fftmagSpec[0].length);
         double[] fftFrame = new double[n_fft];
-        for (int k = 0; k < frame[0].length; k++){
-            for (int l =0; l < n_fft; l++){
-                fftFrame[l] = fftwin[l]*frame[l][k];
+        System.out.println("FFT Frame shape; " + fftFrame.length);
+
+        //TODO: this is my version
+        for (int k = 0; k < frame.length; k++){
+            for (int l = 0; l < frame[0].length; l++) {
+//                OR
+//        for (int k = 0; k < frame[0].length; k++){
+//            for (int l = 0; l < frame.length; l++) {
+                //TODO: below is original version
+//            for (int k = 0; k < frame[0].length; k++){
+//            for (int l =0; l < n_fft; l++){
+//                fftFrame[l] = fftwin[l]*frame[l][k];
+
+
+                //My code
+                fftFrame[l] = fftwin[l]*frame[k][l];
+
             }
+//            System.out.println("Calculating magSpectro");
             double[] magSpec = magSpectrogram(fftFrame);
-            for (int i =0; i < 1+n_fft/2; i++){
-                fftmagSpec[i][k] = magSpec[i];
+//            System.out.println("Calculating magSpectro done!");
+//            System.out.println("magSpec shape " + magSpec.length);
+            for (int i =0; i < n_fft; i++){
+//            for (int i =0; i < 1+n_fft/2; i++){
+//                fftmagSpec[i][k] = magSpec[i];
+                fftmagSpec[k][i] = magSpec[i];
             }
         }
+//        System.out.println("Reach return statement here...");
         return fftmagSpec;
     }
 
     private double[] magSpectrogram(double[] frame){
         double[] magSpec = new double[frame.length];
+//        System.out.println("Start FFT process");
         fft.process(frame);
+//        System.out.println("Start FFT process done");
         for (int m = 0; m < frame.length; m++) {
             magSpec[m] = fft.real[m] * fft.real[m] + fft.imag[m] * fft.imag[m];
         }
@@ -135,10 +166,18 @@ public class MFCC {
     //frame, librosa
     private double[][] yFrame(double[] ypad){
         final int n_frames = 1 + (ypad.length - n_fft) / hop_length;
-        double[][] winFrames = new double[n_fft][n_frames];
-        for (int i = 0; i < n_fft; i++){
-            for (int j = 0; j < n_frames; j++){
-                winFrames[i][j] = ypad[j*hop_length+i];
+        //TODO: python flip the shape here with [n_frames][n_fft];
+        //We might need to change that also
+//        double[][] winFrames = new double[n_fft][n_frames];
+//        for (int i = 0; i < n_fft; i++){
+//            for (int j = 0; j < n_frames; j++){
+//                winFrames[i][j] = ypad[j*hop_length+i];
+//            }
+//        }
+        double[][] winFrames = new double[n_frames][n_fft];
+        for (int j = 0; j < n_frames; j++){
+            for (int i = 0; i < n_fft; i++){
+                winFrames[j][i] = ypad[j*hop_length+i];
             }
         }
         return winFrames;

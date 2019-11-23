@@ -75,6 +75,7 @@ public class FFT {
         // FFT time domain decomposition carried out by "bit reversal sorting"
         // algorithm
         int k;
+//        System.out.println("Start for loop 1");
         for (int i = 1; i < numPoints - 2; i++) {
             if (i < j) {
                 // swap
@@ -87,12 +88,16 @@ public class FFT {
             }
             k = halfNumPoints;
             while (k <= j) {
+                //TODO: this is quick fix right now
+                if (k == 0 && j == 0) {
+                    break;
+                }
                 j -= k;
                 k >>= 1;
             }
             j += k;
         }
-
+//        System.out.println("Start for loop 2");
         // loop for each stage
         for (int stage = 1; stage <= numStages; stage++) {
             int LE = 1;
@@ -110,13 +115,29 @@ public class FFT {
                 // loop for each butterfly
                 for (int butterfly = subDFT - 1; butterfly <= numPoints - 1; butterfly += LE) {
                     int ip = butterfly + LE2;
+                    if (ip >= real.length) {
+                        continue;
+                    }
                     // butterfly calculation
+//                    System.out.println("Throw error at 1");
                     double tempReal = (double) (real[ip] * UR - imag[ip] * UI);
+//                    System.out.println("Throw error at 2");
+
                     double tempImag = (double) (real[ip] * UI + imag[ip] * UR);
+//                    System.out.println("Throw error at 3");
+
                     real[ip] = real[butterfly] - tempReal;
+//                    System.out.println("Throw error at 4");
+
                     imag[ip] = imag[butterfly] - tempImag;
+//                    System.out.println("Throw error at 5");
+
                     real[butterfly] += tempReal;
+//                    System.out.println("Throw error at 6");
+
                     imag[butterfly] += tempImag;
+//                    System.out.println("Throw error at 7");
+
                 }
 
                 double tempUR = UR;
