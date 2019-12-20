@@ -11,7 +11,7 @@ public class ReadExample
 		try
 		{
 			// Open the wav file specified as the first argument
-			WavFile wavFile = WavFile.openWavFile(new File(VIDEO2));
+			WavFile wavFile = WavFile.openWavFile(new File(PATH));
 
 			// Display information about the wav file
 			wavFile.display();
@@ -22,8 +22,8 @@ public class ReadExample
 			System.out.println("Num frames: " + wavFile.getNumFrames());
 			// Create a buffer of 100 frames
 			double[] buffer = new double[(int) wavFile.getNumFrames() * numChannels];
-//			int[][] buffer2 = new int[(int) wavFile.getNumFrames()][numChannels];
-			int[][] buffer2 = new int[numChannels][(int) wavFile.getNumFrames()];
+			int[][] buffer2 = new int[(int) wavFile.getNumFrames()][numChannels];
+//			int[][] buffer2 = new int[numChannels][(int) wavFile.getNumFrames()];
 			int[] buffer3 = new int[(int) wavFile.getNumFrames() * numChannels];
 
 
@@ -36,7 +36,7 @@ public class ReadExample
 			{
 				// Read frames into buffer
 				framesRead = wavFile.readFrames(buffer, buffer.length); // <-- read wav file in as scaled double buffer
-//				framesRead = wavFile.readFrames(buffer2, 0, buffer.length); <-- read wav file in as double 2d array
+//				framesRead = wavFile.readFrames(buffer2, 0, buffer.length); //<-- read wav file in as double 2d array
 //				framesRead = wavFile.readFrames(buffer3, buffer.length); // <-- read wav file in as int array
 				// Loop through frames and look for minimum and maximum value
 				for (int s=0 ; s<framesRead * numChannels ; s++)
@@ -47,21 +47,21 @@ public class ReadExample
 			}
 			while (framesRead != 0);
 
-			int LIMIT = 1000;
-			int k = 0;
-			for (double val : buffer) {
-				System.out.print(val + " , ");
-				k++;
-				if (k > LIMIT) {
-					break;
-				}
-			}
-
-
-			//CODE TO PRINT OUT THE BUFFER SIZE
-//			System.out.println("int 2d buffer size: " + buffer2.length + ", " + buffer2[0].length);
 //			int LIMIT = 1000;
 //			int k = 0;
+//			for (double val : buffer) {
+//				System.out.print(val + " , ");
+//				k++;
+//				if (k > LIMIT) {
+//					break;
+//				}
+//			}
+
+
+//			//CODE TO PRINT OUT THE BUFFER SIZE
+//			System.out.println("int 2d buffer size: " + buffer2.length + ", " + buffer2[0].length);
+////			int LIMIT = 1000;
+//			k = 0;
 //			for (int i = 0; i < buffer2.length; i++) {
 //				for (int j = 0; j < buffer2[0].length; j++) {
 //					System.out.print(buffer2[i][j] + " , ");
@@ -79,6 +79,18 @@ public class ReadExample
 			double[] input = new double[16000];
 			for (int i = 0; i < input.length; i++) {
 				input[i] = (double) buffer[i + 0];
+
+			}
+
+			int LIMIT = 1000;
+			int k = 0;
+			System.out.println("Input 16000");
+			for (double val : input) {
+				System.out.print(val + " , ");
+				k++;
+				if (k > LIMIT) {
+					break;
+				}
 			}
 //			double[] input = buffer;
 

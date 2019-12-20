@@ -83,19 +83,26 @@ public class MFCC {
         System.out.println("FFT window size: " + fftwin.length);
         //pad y with reflect mode so it's centered. This reflect padding implementation is
         // not perfect but works for this demo.
-        double[] ypad = new double[n_fft+y.length];
+        //TODO: Try not padding
+//        double[] ypad = new double[n_fft+y.length];
+//        System.out.println("Ypad shape: " + ypad.length);
+//        System.out.println("STEP 2.1");
+//        for (int i = 0; i < n_fft/2; i++){
+////            ypad[(n_fft/2)-i-1] = y[i+1];
+////            ypad[(n_fft/2)+y.length+i] = y[y.length-2-i];
+////        }
+
+
+//        for (int j = 0; j < y.length; j++){
+//            ypad[(n_fft/2)+j] = y[j];
+//        }
+//        System.out.println("STEP 2.3");
+
+        double[] ypad = y;
         System.out.println("Ypad shape: " + ypad.length);
         System.out.println("STEP 2.1");
-        for (int i = 0; i < n_fft/2; i++){
-            ypad[(n_fft/2)-i-1] = y[i+1];
-            ypad[(n_fft/2)+y.length+i] = y[y.length-2-i];
-        }
         System.out.println("STEP 2.2");
 
-        for (int j = 0; j < y.length; j++){
-            ypad[(n_fft/2)+j] = y[j];
-        }
-        System.out.println("STEP 2.3");
 
         //TODO: let's try not padding
         final double[][] frame = yFrame(y);
@@ -166,6 +173,7 @@ public class MFCC {
     //frame, librosa
     private double[][] yFrame(double[] ypad){
         final int n_frames = 1 + (ypad.length - n_fft) / hop_length;
+        System.out.println("Num frames: " + n_frames);
         //TODO: python flip the shape here with [n_frames][n_fft];
         //We might need to change that also
 //        double[][] winFrames = new double[n_fft][n_frames];
