@@ -116,6 +116,8 @@ public class MFCC {
         double[] fftFrame = new double[n_fft];
         System.out.println("FFT Frame shape; " + fftFrame.length);
 
+//        fft.process();
+
         //TODO: this is my version
         for (int k = 0; k < frame.length; k++){
             for (int l = 0; l < frame[0].length; l++) {
@@ -136,11 +138,14 @@ public class MFCC {
             double[] magSpec = magSpectrogram(fftFrame);
 //            System.out.println("Calculating magSpectro done!");
 //            System.out.println("magSpec shape " + magSpec.length);
+            System.out.println("-----");
             for (int i =0; i < n_fft; i++){
 //            for (int i =0; i < 1+n_fft/2; i++){
 //                fftmagSpec[i][k] = magSpec[i];
+                System.out.print(magSpec[i] + ", ");
                 fftmagSpec[k][i] = magSpec[i];
             }
+            System.out.println("");
         }
 //        System.out.println("Reach return statement here...");
         return fftmagSpec;
